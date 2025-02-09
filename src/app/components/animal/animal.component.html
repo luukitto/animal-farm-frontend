@@ -1,1 +1,38 @@
-<p>animal works!</p>
+<div class="animal-container">
+  <h2>Animals</h2>
+  <ng-container *ngIf="!error; else errorTpl">
+    <table class="animal-table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <br>
+        <th>Type</th>
+        <br>
+        <th>Arkipo</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let animal of animals">
+        <td>{{ animal.name }}</td>
+        <br>
+        <td>{{ animal.type }}</td>
+        <br>
+        <td>{{ animal.arkipoCounter }}</td>
+        <button (click)="feedAnimal(animal.id)">ჭამე</button>
+      </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading-spinner">
+    Loading...
+  </div>
+</ng-template>
+
+<ng-template #errorTpl>
+  <div class="error-message">
+    {{ error }}
+  </div>
+</ng-template>
