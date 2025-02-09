@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Animal } from "../models/animal.model";
-import { PigStatus } from "../models/pig.model";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,7 @@ export class AnimalService {
     return this.http.get<Animal[]>(this.apiUrl)
   }
 
-  updateAnimals(id: number): Observable<{animal: Animal, pigStatus: PigStatus}>{
-    return this.http.post<{animal: Animal, pigStatus: PigStatus}>(`${this.apiUrl}/${id}/feed`, {})
+  feedAnimal(id: number): Observable<Animal>{
+    return this.http.post<Animal>(`${this.apiUrl}/${id}/feed`, {})
   }
 }

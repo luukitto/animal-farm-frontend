@@ -22,7 +22,8 @@ export class AnimalComponent implements OnInit {
   @Input() pigStatusRef!: PigStatusComponent;
 
   constructor(
-    private animalService: AnimalService) {}
+    private animalService: AnimalService) {
+  }
 
   ngOnInit() {
     this.getAnimals()
@@ -32,21 +33,22 @@ export class AnimalComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    this.animalService.updateAnimals(id).subscribe({
+    this.animalService.feedAnimal(id).subscribe({
       next: (data) => {
         // Update Animal
-        const fedAnimal = data.animal
+        const fedAnimal = data
         const index = this.animals.findIndex(animal => animal.id === fedAnimal.id);
         if (index !== -1) {
           this.animals[index] = fedAnimal;
         }
 
         // Update PigStatus to HAPPY
-        if (data.pigStatus.status == Status.HAPPY) {
-          this.pigStatusRef.updatePigStatus(Status.HAPPY);
-        } else {
-          console.error("Pig doesn't seem to be happy");
-        }
+        this.pigStatusRef.updatePigStatus(Status.HAPPY);
+
+        // Update PigStatus to DEFAULT after 3 seconds
+        setTimeout(() => {
+          this.pigStatusRef.updatePigStatus(Status.DEFAULT);
+        }, 3000);
       }
     })
   }
