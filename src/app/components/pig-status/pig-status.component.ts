@@ -15,6 +15,7 @@ export class PigStatusComponent implements OnInit{
   loading = false;
   error: string | null = null;
   pigStatus: PigStatus | null = null;
+  status: string = 'default'
 
   constructor(private pigService: PigService) {
   }
@@ -41,6 +42,7 @@ export class PigStatusComponent implements OnInit{
   }
 
   updatePigStatus(newStatus: string): void {
+    this.status = newStatus
     this.loading = true;
     this.error = null;
 
