@@ -1,5 +1,11 @@
 export interface PigStatus {
   id: number;
   name: string;
-  status: 'default' | 'happy' | 'putin';
+  status: Status
+}
+
+export enum Status {
+  DEFAULT = "default",
+  HAPPY = "happy",
+  PUTIN = "putin"
 }
