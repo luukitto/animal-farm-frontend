@@ -1,12 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { PigService } from "../../services/pig.service";
+import { HttpClientModule } from "@angular/common/http";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: 'app-pig-status',
   standalone: true,
-  imports: [],
+  imports: [HttpClientModule, CommonModule],
   templateUrl: './pig-status.component.html',
   styleUrl: './pig-status.component.css'
 })
-export class PigStatusComponent {
+export class PigStatusComponent implements OnInit{
 
+  constructor(private pigService: PigService) {
+  }
+
+  ngOnInit() {
+    this.getPigStatus()
+  }
+
+  getPigStatus() {
+    this.pigService.getStatus().subscribe((res) => {
+      console.log(res, 'status')
+    })
+  }
 }
