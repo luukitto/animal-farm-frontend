@@ -1,27 +1,24 @@
 <div class="status-container">
   <ng-container *ngIf="!error; else errorTpl">
     <div class="status-card" *ngIf="pigStatus; else loadingTpl">
-      <h2>{{ pigStatus.name }}'s Status</h2>
       <div class="status-badge" [ngClass]="pigStatus.status">
-        {{ pigStatus.status }}
+        <div [ngSwitch]="pigStatus.status">
+          <img *ngSwitchCase="Status.DEFAULT"
+               alt="pig"
+               src="assets/default.jpeg"
+               (click)="updatePigStatus(Status.PUTIN)">
+          <img *ngSwitchCase="Status.HAPPY"
+               alt="happy pig"
+               src="assets/happy.jpeg"
+               (click)="updatePigStatus(Status.PUTIN)">
+          <img *ngSwitchCase="Status.PUTIN"
+               alt="pigs in love"
+               src="assets/putin.jpeg"
+               (click)="updatePigStatus(Status.DEFAULT)">
+        </div>
       </div>
-      <br>
-      <button (click)="getPigStatus()" class="refresh-btn">
-        Get Current Status
-      </button>
     </div>
 
-    <div class="status-actions">
-      <button (click)="updatePigStatus('default')" class="status-btn default">
-        Set Default
-      </button>
-      <button (click)="updatePigStatus('happy')" class="status-btn happy">
-        Set Happy
-      </button>
-      <button (click)="updatePigStatus('putin')" class="status-btn putin">
-        Set Putin
-      </button>
-    </div>
   </ng-container>
 </div>
 

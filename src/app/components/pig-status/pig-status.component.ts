@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PigService } from "../../services/pig.service";
 import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from "@angular/common";
-import { PigStatus } from "../../models/pig.model";
+import { PigStatus, Status } from "../../models/pig.model";
 
 @Component({
   selector: 'app-pig-status',
@@ -58,4 +58,5 @@ export class PigStatusComponent implements OnInit{
       }
     });
   }
+  protected readonly Status = Status
 }
