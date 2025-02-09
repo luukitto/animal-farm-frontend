@@ -15,4 +15,11 @@ export class PigService {
     return this.http.get<PigStatus>(this.apiUrl)
   }
 
+  updateStatus(status: string): Observable<PigStatus> {
+    const payload = {
+      id: 1,
+      status: status
+    }
+    return this.http.post<PigStatus>(this.apiUrl, payload)
+  }
 }
