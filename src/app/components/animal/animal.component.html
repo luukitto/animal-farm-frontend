@@ -1,38 +1,49 @@
-<div class="animal-container">
-  <h2>Animals</h2>
-  <ng-container *ngIf="!error; else errorTpl">
-    <table class="animal-table">
-      <thead>
-      <tr>
-        <th>Name</th>
-        <br>
-        <th>Type</th>
-        <br>
-        <th>Arkipo</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let animal of animals">
-        <td>{{ animal.name }}</td>
-        <br>
-        <td>{{ animal.type }}</td>
-        <br>
-        <td>{{ animal.arkipoCounter }}</td>
-        <button (click)="feedAnimal(animal.id)">ჭამე</button>
-      </tr>
-      </tbody>
-    </table>
-  </ng-container>
-</div>
+<mat-card class="animal-container">
+  <mat-card-header>
+    <mat-card-title>ცხოველები</mat-card-title>
+  </mat-card-header>
 
-<ng-template #loadingTpl>
-  <div class="loading-spinner">
-    Loading...
-  </div>
-</ng-template>
+  <mat-card-content>
+    <mat-form-field class="filter-field">
+      <mat-label>ფილტრი</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="მოძებნე ცხოველები..." #input>
+    </mat-form-field>
 
-<ng-template #errorTpl>
-  <div class="error-message">
-    {{ error }}
-  </div>
-</ng-template>
+    <ng-container>
+      <table mat-table [dataSource]="dataSource" matSort class="animal-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> სახელი </th>
+          <td mat-cell *matCellDef="let animal"> {{animal.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> ცხოველი </th>
+          <td mat-cell *matCellDef="let animal"> {{animal.type}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="arkipoCounter">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> არქიფო </th>
+          <td mat-cell *matCellDef="let animal"> {{animal.arkipoCounter}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> თქიფე </th>
+          <td mat-cell *matCellDef="let animal">
+            <button mat-mini-fab class="feed-button" (click)="feedAnimal(animal.id)">
+              <mat-icon class="material-symbols-outlined">attach_money
+              </mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]"
+                     showFirstLastButtons
+                     aria-label="Select page">
+      </mat-paginator>
+    </ng-container>
+  </mat-card-content>
+</mat-card>
