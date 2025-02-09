@@ -1,38 +1,46 @@
 <div class="status-container">
   <ng-container *ngIf="!error; else errorTpl">
-    <div class="status-card" *ngIf="pigStatus; else loadingTpl">
-      <div class="status-badge" [ngClass]="pigStatus.status">
-        <div [ngSwitch]="pigStatus.status">
-          <img *ngSwitchCase="Status.DEFAULT"
-               alt="pig"
-               src="assets/default.jpeg"
-               (click)="updatePigStatus(Status.PUTIN)">
-          <img *ngSwitchCase="Status.HAPPY"
-               alt="happy pig"
-               src="assets/happy.jpeg"
-               (click)="updatePigStatus(Status.PUTIN)">
-          <img *ngSwitchCase="Status.PUTIN"
-               alt="pigs in love"
-               src="assets/putin.jpeg"
-               (click)="updatePigStatus(Status.DEFAULT)">
+    <mat-card class="status-card" *ngIf="pigStatus; else loadingTpl">
+      <mat-card-content>
+        <div class="status-badge" [ngClass]="pigStatus.status">
+          <div [ngSwitch]="pigStatus.status">
+            <img *ngSwitchCase="Status.DEFAULT"
+                 alt="pig"
+                 src="assets/default.jpeg"
+                 (click)="updatePigStatus(Status.PUTIN)"
+                 class="status-image">
+            <img *ngSwitchCase="Status.HAPPY"
+                 alt="happy pig"
+                 src="assets/happy.jpeg"
+                 (click)="updatePigStatus(Status.PUTIN)"
+                 class="status-image">
+            <img *ngSwitchCase="Status.PUTIN"
+                 alt="pigs in love"
+                 src="assets/putin.jpeg"
+                 (click)="updatePigStatus(Status.DEFAULT)"
+                 class="status-image">
+          </div>
         </div>
-      </div>
-    </div>
-
+      </mat-card-content>
+    </mat-card>
   </ng-container>
 </div>
 
 <ng-template #loadingTpl>
-  <div class="loading-spinner">
-    Loading...
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
 </ng-template>
 
 <ng-template #errorTpl>
-  <div class="error-message">
-    {{ error }}
-    <button (click)="getPigStatus()" class="retry-btn">
-      Retry
-    </button>
-  </div>
+  <mat-card class="error-card">
+    <mat-card-content class="error-content">
+      <mat-icon color="warn">error</mat-icon>
+      <span class="error-text">{{ error }}</span>
+      <button mat-raised-button color="primary" (click)="getPigStatus()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </mat-card-content>
+  </mat-card>
 </ng-template>

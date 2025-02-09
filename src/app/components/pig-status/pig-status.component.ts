@@ -3,11 +3,16 @@ import { PigService } from "../../services/pig.service";
 import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from "@angular/common";
 import { PigStatus, Status } from "../../models/pig.model";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { MatCard, MatCardContent, MatCardHeader } from "@angular/material/card";
+import { MatIcon } from "@angular/material/icon";
+import { MatColumnDef, MatHeaderCell, MatHeaderRow, MatTable } from "@angular/material/table";
+import { MatButton } from "@angular/material/button";
 
 @Component({
   selector: 'app-pig-status',
   standalone: true,
-  imports: [HttpClientModule, CommonModule],
+  imports: [HttpClientModule, CommonModule, MatProgressSpinner, MatCard, MatCardContent, MatIcon, MatCardHeader, MatTable, MatHeaderCell, MatColumnDef, MatHeaderRow, MatButton],
   templateUrl: './pig-status.component.html',
   styleUrl: './pig-status.component.css'
 })

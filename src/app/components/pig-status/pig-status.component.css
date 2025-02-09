@@ -1,0 +1,54 @@
+.status-container {
+  padding: 24px;
+  max-width: 500px;
+  margin: 24px auto;
+}
+
+.status-card {
+  border-radius: 16px;
+  background: white;
+  transition: transform 0.3s ease;
+}
+
+.status-card:hover {
+  transform: translateY(-4px);
+}
+
+.status-badge {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.status-image {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: brightness(0.95);
+}
+
+.status-image:hover {
+  filter: brightness(1.05);
+  transform: scale(1.03);
+}
+
+.loading-container {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-card {
+  background: #fff1f2;
+  border-left: 4px solid #dc2626;
+  margin: 16px;
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
