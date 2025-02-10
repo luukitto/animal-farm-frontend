@@ -8,11 +8,13 @@ import { MatCard, MatCardContent, MatCardHeader } from "@angular/material/card";
 import { MatIcon } from "@angular/material/icon";
 import { MatColumnDef, MatHeaderCell, MatHeaderRow, MatTable } from "@angular/material/table";
 import { MatButton } from "@angular/material/button";
+import { MusicComponent } from "../music/music.component";
+import { AudioService } from "../../services/music.service";
 
 @Component({
   selector: 'app-pig-status',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, MatProgressSpinner, MatCard, MatCardContent, MatIcon, MatCardHeader, MatTable, MatHeaderCell, MatColumnDef, MatHeaderRow, MatButton],
+  imports: [HttpClientModule, CommonModule, MatProgressSpinner, MatCard, MatCardContent, MatIcon, MatCardHeader, MatTable, MatHeaderCell, MatColumnDef, MatHeaderRow, MatButton, MusicComponent],
   templateUrl: './pig-status.component.html',
   styleUrl: './pig-status.component.css'
 })
@@ -22,7 +24,9 @@ export class PigStatusComponent implements OnInit{
   pigStatus: PigStatus | null = null;
   status: string = 'default'
 
-  constructor(private pigService: PigService) {
+  constructor(
+    private pigService: PigService,
+    private audioService: AudioService) {
   }
 
   ngOnInit() {
@@ -48,6 +52,7 @@ export class PigStatusComponent implements OnInit{
 
   updatePigStatus(newStatus: string): void {
     this.status = newStatus
+    this.audioService.stop()
     this.loading = true;
     this.error = null;
 

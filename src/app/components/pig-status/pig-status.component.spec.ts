@@ -11,7 +11,7 @@ describe('PigStatusComponent', () => {
       imports: [PigStatusComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(PigStatusComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
