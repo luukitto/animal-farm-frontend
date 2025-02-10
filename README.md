@@ -7,7 +7,7 @@ It's about 6AM.
 Anyway,
 Good morning to you and good night to myself.
 
-P.S. For angular related instruction, please take a look at [Guide](guide.md).
+P.S. For angular related instructions, please take a look at [Guide](guide.md).
 
 Cheers,
 Luka
