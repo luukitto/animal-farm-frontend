@@ -1,6 +1,8 @@
 .animal-container {
   margin: 24px;
   border-radius: 16px;
+  display: flex;
+  bottom: 20px;
 }
 .mat-card-content {
   margin-bottom: 25px;
