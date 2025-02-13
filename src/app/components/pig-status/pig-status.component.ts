@@ -51,8 +51,20 @@ export class PigStatusComponent implements OnInit{
   }
 
   updatePigStatus(newStatus: string): void {
+    switch (this.status) {
+      case Status.DEFAULT:
+      case Status.HAPPY:
+        if (newStatus !== Status.HAPPY) {
+          this.audioService.stop();
+        }
+        break;
+      case Status.PUTIN:
+        if (newStatus === Status.HAPPY || newStatus === Status.DEFAULT) {
+          this.audioService.stop();
+        }
+        break;
+    }
     this.status = newStatus
-    this.audioService.stop()
     this.loading = true;
     this.error = null;
 
