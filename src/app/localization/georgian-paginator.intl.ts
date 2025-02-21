@@ -1,5 +1,7 @@
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class GeorgianPaginatorIntl extends MatPaginatorIntl {
   override itemsPerPageLabel = 'ჩანაწერები გვერდზე:';
   override nextPageLabel = 'შემდეგი გვერდი';

@@ -1,84 +1,71 @@
 import { Component, OnInit } from '@angular/core';
-import { PigService } from "../../services/pig.service";
-import { HttpClientModule } from "@angular/common/http";
-import { CommonModule } from "@angular/common";
-import { PigStatus, Status } from "../../models/pig.model";
-import { MatProgressSpinner } from "@angular/material/progress-spinner";
-import { MatCard, MatCardContent, MatCardHeader } from "@angular/material/card";
-import { MatIcon } from "@angular/material/icon";
-import { MatColumnDef, MatHeaderCell, MatHeaderRow, MatTable } from "@angular/material/table";
-import { MatButton } from "@angular/material/button";
-import { MusicComponent } from "../music/music.component";
+import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MusicComponent } from '../music/music.component';
+import { PigStatus, Status } from '../../models/pig.model';
+import * as PigStatusActions from '../../store/pig/pig.actions';
+import { selectPigStatus, selectPigLoading,selectPigError } from '../../store/pig/pig.selector';
+import { PigStatusState } from '../../store/pig/pig.reducer';
 import { AudioService } from "../../services/music.service";
 
 @Component({
   selector: 'app-pig-status',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, MatProgressSpinner, MatCard, MatCardContent, MatIcon, MatCardHeader, MatTable, MatHeaderCell, MatColumnDef, MatHeaderRow, MatButton, MusicComponent],
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    MatButtonModule,
+    MusicComponent
+  ],
   templateUrl: './pig-status.component.html',
-  styleUrl: './pig-status.component.css'
+  styleUrls: ['./pig-status.component.css']
 })
-export class PigStatusComponent implements OnInit{
-  loading = false;
-  error: string | null = null;
-  pigStatus: PigStatus | null = null;
-  status: string = 'default'
+export class PigStatusComponent implements OnInit {
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
+  pigStatus$: Observable<PigStatus | null>;
+  readonly Status = Status;
 
-  constructor(
-    private pigService: PigService,
-    private audioService: AudioService) {
+  constructor(private store: Store<{ pigStatus: PigStatusState }>, private audioService: AudioService) {
+    this.loading$ = this.store.select(selectPigLoading);
+    this.error$ = this.store.select(selectPigError);
+    this.pigStatus$ = this.store.select(selectPigStatus);
   }
 
   ngOnInit() {
-    this.getPigStatus()
+    this.store.dispatch(PigStatusActions.loadPigStatus());
   }
 
-  getPigStatus() {
-    this.loading = true;
-    this.error = null;
+  updatePigStatus(currentStatus: Status): void {
+    let nextStatus: Status;
 
-    this.pigService.getStatus().subscribe({
-      next: (resp) => {
-        this.pigStatus = resp;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to get status';
-        this.loading = false
-        console.error("Error getting status:", error);
-      }
-    })
-  }
-
-  updatePigStatus(newStatus: string): void {
-    switch (this.status) {
+    switch (currentStatus) {
       case Status.DEFAULT:
-      case Status.HAPPY:
-        if (newStatus !== Status.HAPPY) {
-          this.audioService.stop();
-        }
+        nextStatus = Status.PUTIN;
+        this.audioService.stop();
         break;
       case Status.PUTIN:
-        if (newStatus === Status.HAPPY || newStatus === Status.DEFAULT) {
-          this.audioService.stop();
-        }
+        nextStatus = Status.DEFAULT;
+        this.audioService.stop();
         break;
+      case Status.HAPPY:
+        nextStatus = Status.DEFAULT;
+        break;
+      default:
+        nextStatus = Status.DEFAULT;
     }
-    this.status = newStatus
-    this.loading = true;
-    this.error = null;
 
-    this.pigService.updateStatus(newStatus).subscribe({
-      next: (data) => {
-        this.pigStatus = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to update pig status. Please try again.';
-        this.loading = false;
-        console.error('Error updating status:', error);
-      }
-    });
+    this.store.dispatch(PigStatusActions.updatePigStatus({ newStatus: nextStatus }));
   }
-  protected readonly Status = Status
+
+
 }

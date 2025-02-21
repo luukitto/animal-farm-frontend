@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AnimalService } from "../../services/animal.service";
 import { Animal } from "../../models/animal.model";
-import { NgForOf, NgIf } from "@angular/common";
+import { CommonModule, NgForOf, NgIf } from "@angular/common";
 import { PigStatusComponent } from "../pig-status/pig-status.component";
 import { Status } from "../../models/pig.model";
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
@@ -22,6 +22,10 @@ import { MatPaginator, MatPaginatorIntl } from "@angular/material/paginator";
 import { MatSort, MatSortHeader } from "@angular/material/sort";
 import { MatInput } from "@angular/material/input";
 import { GeorgianPaginatorIntl } from "../../localization/georgian-paginator.intl";
+import * as AnimalActions from '../../store/animal/animal.actions';
+import * as AnimalSelectors from '../../store/animal/animal.selector';
+import { Store } from "@ngrx/store";
+import * as PigStatusActions from '../../store/pig/pig.actions';
 
 @Component({
   selector: 'app-animal',
@@ -37,6 +41,7 @@ import { GeorgianPaginatorIntl } from "../../localization/georgian-paginator.int
     MatHeaderCell,
     MatCell,
     MatIcon,
+    CommonModule,
     MatHeaderRow,
     MatRow,
     MatProgressSpinner,
@@ -60,19 +65,17 @@ import { GeorgianPaginatorIntl } from "../../localization/georgian-paginator.int
   styleUrl: './animal.component.css'
 })
 export class AnimalComponent implements OnInit, AfterViewInit {
-  loading = false;
-  error: string | null = null;
+  // loading$ = this.store.select(AnimalSelectors.selectLoading);
+  // error$ = this.store.select(AnimalSelectors.selectError);
   @Input() pigStatusRef!: PigStatusComponent;
   displayedColumns: string[] = ['name', 'type', 'arkipoCounter', 'actions'];
   dataSource = new MatTableDataSource<Animal>([]);
-
-
-
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private animalService: AnimalService) {
+    private animalService: AnimalService,
+    private store: Store) {
   }
 
   ngAfterViewInit() {
@@ -87,44 +90,30 @@ export class AnimalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getAnimals()
+    this.store.dispatch(AnimalActions.loadAnimals());
+
+    this.store.select(AnimalSelectors.selectAllAnimals)
+      .subscribe(animals => {
+        this.dataSource.data = animals;
+      });
   }
+
+
 
   feedAnimal(id: number) {
-    this.loading = true;
-    this.error = null;
+    this.store.dispatch(AnimalActions.feedAnimal({ id }));
 
-    this.animalService.feedAnimal(id).subscribe({
-      next: (data) => {
-        const index = this.dataSource.data.findIndex(animal => animal.id === data.id);
-        if (index !== -1) {
-          const updatedData = [...this.dataSource.data];
-          updatedData[index] = data;
-          this.dataSource.data = updatedData;
-        }
+    this.store.dispatch(PigStatusActions.updatePigStatus({ newStatus: Status.HAPPY }));
 
-        this.pigStatusRef.updatePigStatus(Status.HAPPY);
-        setTimeout(() => {
-          this.pigStatusRef.updatePigStatus(Status.DEFAULT);
-        }, 3000);
-      }
-    });
+    setTimeout(() => {
+      this.store.dispatch(PigStatusActions.updatePigStatus({ newStatus: Status.DEFAULT }));
+    }, 3000);
   }
 
-  getAnimals(): void {
-    this.loading = true;
-    this.error = null;
 
-    this.animalService.getAnimals().subscribe({
-      next: (data) => {
-        this.dataSource.data = data
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to get animals. Please try again.';
-        this.loading = false;
-        console.error('Error getting animals:', error);
-      }
-    })
+  getAnimals(): void {
+    // Simply dispatch the load action
+    this.store.dispatch(AnimalActions.loadAnimals());
   }
 
 }
