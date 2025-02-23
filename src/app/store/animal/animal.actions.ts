@@ -1,11 +1,16 @@
 import { createAction, props } from '@ngrx/store';
-import { Animal } from '../../models/animal.model';
+import { Animal, Animals } from '../../models/animal.model';
 
-export const loadAnimals = createAction('[Animal] Load Animals');
+export const loadAnimals = createAction(
+  '[Animal] Load Animals',
+  props<{ page?: number, limit?: number }>()
+);
+
 export const loadAnimalsSuccess = createAction(
   '[Animal] Load Animals Success',
-  props<{ animals: Animal[] }>()
+  props<{ animals: Animals }>()
 );
+
 export const loadAnimalsFailure = createAction(
   '[Animal] Load Animals Failure',
   props<{ error: string }>()

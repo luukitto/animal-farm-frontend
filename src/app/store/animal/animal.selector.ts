@@ -1,11 +1,16 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { AnimalState } from './animal.reducer';
+import { State as AnimalState } from './animal.reducer';
 
 export const selectAnimalState = createFeatureSelector<AnimalState>('animal');
 
 export const selectAllAnimals = createSelector(
   selectAnimalState,
-  state => state.animals
+  state => state.animals.items
+);
+
+export const selectAnimalsMeta = createSelector(
+  selectAnimalState,
+  state => state.animals.meta
 );
 
 export const selectLoading = createSelector(

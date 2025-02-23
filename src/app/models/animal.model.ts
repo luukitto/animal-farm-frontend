@@ -4,3 +4,15 @@ export interface Animal {
   type: string;
   arkipoCounter: number;
 }
+
+export interface Animals {
+  items: Animal[]
+  meta: Meta
+}
+
+export interface Meta {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}

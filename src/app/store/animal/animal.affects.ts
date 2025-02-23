@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { of, switchMap } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AnimalService } from '../../services/animal.service';
 import * as AnimalActions from './animal.actions';
 
 @Injectable()
 export class AnimalEffects {
-  loadAnimals$ = createEffect(() =>
-    this.actions$.pipe(
+  loadAnimals$ = createEffect(() => {
+    return this.actions$.pipe(
       ofType(AnimalActions.loadAnimals),
-      mergeMap(() => this.animalService.getAnimals()
-        .pipe(
+      switchMap(({ page = 1, limit = 10 }) =>
+        this.animalService.getAnimals(page, limit).pipe(
           map(animals => AnimalActions.loadAnimalsSuccess({ animals })),
-          catchError(error => of(AnimalActions.loadAnimalsFailure({ error: 'Failed to get animals. Please try again.' })))
-        ))
-    )
-  );
+          catchError(error => of(AnimalActions.loadAnimalsFailure({ error: error.message })))
+        )
+      )
+    );
+  });
+
+
 
   feedAnimal$ = createEffect(() =>
     this.actions$.pipe(

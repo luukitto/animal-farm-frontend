@@ -1,15 +1,23 @@
 import { createReducer, on } from '@ngrx/store';
-import { Animal } from '../../models/animal.model';
+import { Animals } from '../../models/animal.model';
 import * as AnimalActions from './animal.actions';
 
-export interface AnimalState {
-  animals: Animal[];
+export interface State {
+  animals: Animals
   loading: boolean;
   error: string | null;
 }
 
-export const initialState: AnimalState = {
-  animals: [],
+export const initialState: State = {
+  animals: {
+    items: [],
+    meta: {
+      total: 0,
+      page: 1,
+      limit: 10,
+      pages: 0
+    }
+  },
   loading: false,
   error: null
 };
@@ -38,7 +46,10 @@ export const animalReducer = createReducer(
   })),
   on(AnimalActions.feedAnimalSuccess, (state, { animal }) => ({
     ...state,
-    animals: state.animals.map(a => a.id === animal.id ? animal : a),
+    animals: {
+      ...state.animals,
+      items: state.animals.items.map(a => a.id === animal.id ? animal : a)
+    },
     loading: false
   })),
   on(AnimalActions.feedAnimalFailure, (state, { error }) => ({

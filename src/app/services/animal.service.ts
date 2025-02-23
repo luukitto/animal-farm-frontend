@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { Animal } from "../models/animal.model";
+import { Animal, Animals } from "../models/animal.model";
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class AnimalService {
 
   constructor(private http: HttpClient) { }
 
-  getAnimals(): Observable<Animal[]> {
-    return this.http.get<Animal[]>(this.apiUrl)
+  getAnimals(page: number , limit: number ): Observable<Animals> {
+    return this.http.get<Animals>(`/api/animals?page=${page}&limit=${limit}`);
   }
 
   feedAnimal(id: number): Observable<Animal>{
