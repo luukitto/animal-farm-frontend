@@ -10,8 +10,8 @@ export class AnimalEffects {
   loadAnimals$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AnimalActions.loadAnimals),
-      switchMap(({ page, search }) =>
-        this.animalService.getAllAnimals(page, search).pipe(
+      switchMap(({ page, search, sortBy, sortOrder }) =>
+        this.animalService.getAllAnimals(page, search, sortBy, sortOrder).pipe(
           map(response => AnimalActions.loadAnimalsSuccess({ 
             animals: response.items,
             meta: response.meta 

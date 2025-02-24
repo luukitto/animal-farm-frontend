@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AnimalService } from "../../services/animal.service";
 import { Animal } from "../../models/animal.model";
 import { CommonModule, NgForOf, NgIf } from "@angular/common";
@@ -15,15 +15,14 @@ import {
   MatHeaderRowDef,
   MatRow,
   MatRowDef,
-  MatTable,
-  MatTableDataSource
+  MatTable
 } from "@angular/material/table";
 import { MatIcon } from "@angular/material/icon";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatMiniFabButton } from "@angular/material/button";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatPaginator, MatPaginatorIntl } from "@angular/material/paginator";
-import { MatSort, MatSortHeader } from "@angular/material/sort";
+import { MatSort, MatSortHeader, Sort } from "@angular/material/sort";
 import { MatInput } from "@angular/material/input";
 import { GeorgianPaginatorIntl } from "../../localization/georgian-paginator.intl";
 import * as AnimalActions from '../../store/animal/animal.actions';
@@ -74,10 +73,13 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 })
 export class AnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  
+  @ViewChild(MatSort) sort!: MatSort;
+
   private destroy$ = new Subject<void>();
   private filterSubject = new Subject<string>();
   currentSearch = '';
+  currentSortBy?: string;
+  currentSortOrder?: 'ASC' | 'DESC';
 
   displayedColumns: string[] = ['name', 'type', 'arkipoCounter', 'actions'];
   dataSource: Animal[] = [];
@@ -96,9 +98,6 @@ export class AnimalComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  ngAfterViewInit() {
-  }
-
   ngOnInit() {
     this.loadAnimals(1);
 
@@ -115,6 +114,33 @@ export class AnimalComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    // No need for additional initialization
+  }
+
+  onSort(sort: Sort) {
+    if (!sort.active || sort.direction === '') {
+      // Reset sort parameters when clearing sort
+      this.currentSortBy = undefined;
+      this.currentSortOrder = undefined;
+    } else {
+      // If sorting the same column, toggle between ASC and DESC
+      if (this.currentSortBy === sort.active) {
+        this.currentSortOrder = this.currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
+      } else {
+        // If sorting a new column, start with ASC
+        this.currentSortBy = sort.active;
+        this.currentSortOrder = 'ASC';
+      }
+    }
+
+    if (this.paginator) {
+      this.paginator.pageIndex = 0;
+    }
+
+    this.loadAnimals(1);
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -125,10 +151,18 @@ export class AnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadAnimals(page: number = 1) {
-    this.store.dispatch(AnimalActions.loadAnimals({ 
-      page,
-      search: this.currentSearch
-    }));
+    const params: any = { page };
+
+    if (this.currentSearch) {
+      params.search = this.currentSearch;
+    }
+
+    if (this.currentSortBy && this.currentSortOrder) {
+      params.sortBy = this.currentSortBy;
+      params.sortOrder = this.currentSortOrder;
+    }
+
+    this.store.dispatch(AnimalActions.loadAnimals(params));
   }
 
   feedAnimal(id: number) {

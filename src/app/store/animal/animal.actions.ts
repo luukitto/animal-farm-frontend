@@ -1,21 +1,25 @@
 import { createAction, props } from '@ngrx/store';
 import { Animal } from '../../models/animal.model';
-import { PaginatedResponse } from '../../models/paginated-response.model';
 
 export const loadAnimals = createAction(
   '[Animal] Load Animals',
-  props<{ page: number; search?: string }>()
+  props<{
+    page: number;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+  }>()
 );
 
 export const loadAnimalsSuccess = createAction(
   '[Animal] Load Animals Success',
-  props<{ 
-    animals: Animal[]; 
-    meta: { 
-      total: number; 
-      page: number; 
-      limit: number; 
-    } 
+  props<{
+    animals: Animal[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+    }
   }>()
 );
 

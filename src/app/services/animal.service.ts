@@ -17,12 +17,25 @@ export class AnimalService {
     return this.http.post<Animal>(`${this.apiUrl}/${id}/feed`, {});
   }
 
-  getAllAnimals(page: number = 1, search: string = ''): Observable<PaginatedResponse<Animal>> {
-    const params = new HttpParams()
+  getAllAnimals(
+    page: number = 1, 
+    search: string = '',
+    sortBy?: string,
+    sortOrder?: 'ASC' | 'DESC'
+  ): Observable<PaginatedResponse<Animal>> {
+    let params = new HttpParams()
       .set('page', page.toString())
-      .set('limit', '10')
-      .set('search', search);
+      .set('limit', '10');
     
-    return this.http.get<PaginatedResponse<Animal>>(`${this.apiUrl}`, { params });
+    if (search) {
+      params = params.set('search', search);
+    }
+    
+    if (sortBy && sortOrder) {
+      params = params.set('sortBy', sortBy)
+                    .set('sortOrder', sortOrder);
+    }
+    
+    return this.http.get<PaginatedResponse<Animal>>(this.apiUrl, { params });
   }
 }
