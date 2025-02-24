@@ -1,29 +1,39 @@
 import { createAction, props } from '@ngrx/store';
-import { Animal, Animals } from '../../models/animal.model';
+import { Animal } from '../../models/animal.model';
+import { PaginatedResponse } from '../../models/paginated-response.model';
 
 export const loadAnimals = createAction(
   '[Animal] Load Animals',
-  props<{ page?: number, limit?: number }>()
+  props<{ page: number; search?: string }>()
 );
 
 export const loadAnimalsSuccess = createAction(
   '[Animal] Load Animals Success',
-  props<{ animals: Animals }>()
+  props<{ 
+    animals: Animal[]; 
+    meta: { 
+      total: number; 
+      page: number; 
+      limit: number; 
+    } 
+  }>()
 );
 
 export const loadAnimalsFailure = createAction(
   '[Animal] Load Animals Failure',
-  props<{ error: string }>()
+  props<{ error: any }>()
 );
 
 export const feedAnimal = createAction(
   '[Animal] Feed Animal',
   props<{ id: number }>()
 );
+
 export const feedAnimalSuccess = createAction(
   '[Animal] Feed Animal Success',
   props<{ animal: Animal }>()
 );
+
 export const feedAnimalFailure = createAction(
   '[Animal] Feed Animal Failure',
   props<{ error: string }>()

@@ -1,22 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { Animal, Animals } from "../models/animal.model";
+import { Animal } from "../models/animal.model";
+import { PaginatedResponse } from '../models/paginated-response.model';
+   
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnimalService {
-  private apiUrl = 'api/animals'
-
+  private apiUrl = 'api/animals';
 
   constructor(private http: HttpClient) { }
 
-  getAnimals(page: number , limit: number ): Observable<Animals> {
-    return this.http.get<Animals>(`/api/animals?page=${page}&limit=${limit}`);
+  feedAnimal(id: number): Observable<Animal> {
+    return this.http.post<Animal>(`${this.apiUrl}/${id}/feed`, {});
   }
 
-  feedAnimal(id: number): Observable<Animal>{
-    return this.http.post<Animal>(`${this.apiUrl}/${id}/feed`, {})
+  getAllAnimals(page: number = 1, search: string = ''): Observable<PaginatedResponse<Animal>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', '10')
+      .set('search', search);
+    
+    return this.http.get<PaginatedResponse<Animal>>(`${this.apiUrl}`, { params });
   }
 }

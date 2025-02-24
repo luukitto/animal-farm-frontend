@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { AnimalService } from "../../services/animal.service";
 import { Animal } from "../../models/animal.model";
 import { CommonModule, NgForOf, NgIf } from "@angular/common";
@@ -31,6 +31,8 @@ import { selectAllAnimals, selectAnimalsMeta, selectLoading } from '../../store/
 import { Store } from "@ngrx/store";
 import * as PigStatusActions from '../../store/pig/pig.actions';
 import { MatBadge } from "@angular/material/badge";
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-animal',
@@ -70,53 +72,64 @@ import { MatBadge } from "@angular/material/badge";
   templateUrl: './animal.component.html',
   styleUrl: './animal.component.css'
 })
-export class AnimalComponent implements OnInit, AfterViewInit {
-  animals$ = this.store.select(selectAllAnimals);
-  meta$ = this.store.select(selectAnimalsMeta);
+export class AnimalComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  
+  private destroy$ = new Subject<void>();
+  private filterSubject = new Subject<string>();
+  currentSearch = '';
+
+  displayedColumns: string[] = ['name', 'type', 'arkipoCounter', 'actions'];
+  dataSource: Animal[] = [];
   loading$ = this.store.select(selectLoading);
+  meta$ = this.store.select(selectAnimalsMeta);
 
   @Input() pigStatusRef!: PigStatusComponent;
-  displayedColumns: string[] = ['name', 'type', 'arkipoCounter', 'actions'];
-  dataSource = new MatTableDataSource<Animal>([]);
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  pageSizeOptions = [5, 10, 25];
 
   constructor(
     private animalService: AnimalService,
     private store: Store) {
+    this.store.select(selectAllAnimals)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(animals => {
+        this.dataSource = animals;
+      });
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
   }
-
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
 
   ngOnInit() {
-    this.loadAnimals()
-    this.animals$.subscribe(animals => {
-      this.dataSource.data = animals;
-    });
+    this.loadAnimals(1);
 
+    this.filterSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(filterValue => {
+      this.currentSearch = filterValue;
+      if (this.paginator) {
+        this.paginator.pageIndex = 0;
+      }
+      this.loadAnimals(1);
+    });
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   onPageChange(page: number) {
-    this.store.dispatch(AnimalActions.loadAnimals({ page }));
+    this.loadAnimals(page);
   }
 
   loadAnimals(page: number = 1) {
-    this.store.dispatch(AnimalActions.loadAnimals({ page }));
+    this.store.dispatch(AnimalActions.loadAnimals({ 
+      page,
+      search: this.currentSearch
+    }));
   }
-
-
 
   feedAnimal(id: number) {
     this.store.dispatch(AnimalActions.feedAnimal({ id }));
@@ -126,4 +139,8 @@ export class AnimalComponent implements OnInit, AfterViewInit {
     }, 3000);
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.filterSubject.next(filterValue.trim());
+  }
 }

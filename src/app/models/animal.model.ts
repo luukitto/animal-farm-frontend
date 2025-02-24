@@ -5,10 +5,15 @@ export interface Animal {
   arkipoCounter: number;
 }
 
-export interface Animals {
-  items: Animal[]
-  meta: Meta
-}
+// Remove or update the Animals interface to match PaginatedResponse
+// export interface Animals {
+//   items: Animal[];
+//   meta: {
+//     total: number;
+//     page: number;
+//     limit: number;
+//   };
+// }
 
 export interface Meta {
   total: number;

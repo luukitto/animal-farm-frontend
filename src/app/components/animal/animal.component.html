@@ -9,19 +9,19 @@
     </mat-form-field>
 
     <ng-container *ngIf="!(loading$ | async); else loadingSpinner">
-      <table mat-table [dataSource]="dataSource" matSort class="animal-table">
+      <table mat-table [dataSource]="dataSource" class="animal-table">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> სახელი </th>
+          <th mat-header-cell *matHeaderCellDef> სახელი </th>
           <td mat-cell *matCellDef="let animal"> {{animal.name}} </td>
         </ng-container>
 
         <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> ცხოველი </th>
+          <th mat-header-cell *matHeaderCellDef> ცხოველი </th>
           <td mat-cell *matCellDef="let animal"> {{animal.type}} </td>
         </ng-container>
 
         <ng-container matColumnDef="arkipoCounter">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> არქიფოს ბუღალტერია </th>
+          <th mat-header-cell *matHeaderCellDef> არქიფოს ბუღალტერია </th>
           <td mat-cell *matCellDef="let animal"> {{animal.arkipoCounter}} </td>
         </ng-container>
 

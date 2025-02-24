@@ -1,60 +1,51 @@
 import { createReducer, on } from '@ngrx/store';
-import { Animals } from '../../models/animal.model';
+import { Animal } from '../../models/animal.model';
 import * as AnimalActions from './animal.actions';
 
-export interface State {
-  animals: Animals
+export interface AnimalState {
+  animals: Animal[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  } | null;
   loading: boolean;
-  error: string | null;
+  error: any;
 }
 
-export const initialState: State = {
-  animals: {
-    items: [],
-    meta: {
-      total: 0,
-      page: 1,
-      limit: 10,
-      pages: 0
-    }
-  },
+export const initialState: AnimalState = {
+  animals: [],
+  meta: null,
   loading: false,
   error: null
 };
 
 export const animalReducer = createReducer(
   initialState,
-  on(AnimalActions.loadAnimals, state => ({
+  
+  on(AnimalActions.loadAnimals, (state) => ({
     ...state,
     loading: true,
     error: null
   })),
-  on(AnimalActions.loadAnimalsSuccess, (state, { animals }) => ({
+  
+  on(AnimalActions.loadAnimalsSuccess, (state, { animals, meta }) => ({
     ...state,
     animals,
+    meta,
     loading: false
   })),
+  
   on(AnimalActions.loadAnimalsFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false
   })),
-  on(AnimalActions.feedAnimal, state => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
+  
   on(AnimalActions.feedAnimalSuccess, (state, { animal }) => ({
     ...state,
-    animals: {
-      ...state.animals,
-      items: state.animals.items.map(a => a.id === animal.id ? animal : a)
-    },
-    loading: false
-  })),
-  on(AnimalActions.feedAnimalFailure, (state, { error }) => ({
-    ...state,
-    error,
-    loading: false
+    animals: state.animals.map((a: Animal) => 
+      a.id === animal.id ? animal : a
+    )
   }))
 );
