@@ -115,20 +115,16 @@ export class AnimalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // No need for additional initialization
   }
 
   onSort(sort: Sort) {
     if (!sort.active || sort.direction === '') {
-      // Reset sort parameters when clearing sort
       this.currentSortBy = undefined;
       this.currentSortOrder = undefined;
     } else {
-      // If sorting the same column, toggle between ASC and DESC
       if (this.currentSortBy === sort.active) {
         this.currentSortOrder = this.currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
       } else {
-        // If sorting a new column, start with ASC
         this.currentSortBy = sort.active;
         this.currentSortOrder = 'ASC';
       }

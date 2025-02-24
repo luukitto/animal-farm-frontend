@@ -4,7 +4,7 @@ import { PigStatus } from "../../models/pig.model";
 export const loadPigStatus = createAction('[Pig Status] Load Status');
 export const loadPigStatusSuccess = createAction(
   '[Pig] Load Pig Status Success',
-  props<{ status: PigStatus }>()  // Note: using 'status' to match reducer
+  props<{ status: PigStatus }>() 
 );
 export const loadPigStatusFailure = createAction(
   '[Pig Status] Load Status Failure',

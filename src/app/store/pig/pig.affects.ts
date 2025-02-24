@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of, tap } from 'rxjs';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { PigService } from '../../services/pig.service';
 import { AudioService } from '../../services/music.service';
 import * as PigStatusActions from './pig.actions';
@@ -14,7 +14,7 @@ export class PigStatusEffects {
     this.actions$.pipe(
       ofType(PigStatusActions.loadPigStatus),
       mergeMap(() => this.pigService.getStatus().pipe(
-        tap(status => console.log('API Response:', status)),  // Debugging Log
+        tap(status => console.log('API Response:', status)),
         map(status => PigStatusActions.loadPigStatusSuccess({ status })),
         catchError(error => {
           console.error('Error fetching status:', error);
@@ -40,7 +40,7 @@ export class PigStatusEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store<{ pigStatus: PigStatusState }>, // ✅ Ensuring proper state typing
+    private store: Store<{ pigStatus: PigStatusState }>,
     private pigService: PigService,
     private audioService: AudioService
   ) {}
